@@ -1,10 +1,14 @@
+import { useQuery } from "@realm/react";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import AddCardButton from "../../src/components/AddCardButton";
 import AddDeckButton from "../../src/components/AddDeckButton";
+import AddDeckSheet from "../../src/components/AddDeckSheet";
 import Background from "../../src/components/Background";
+import DeckCard from "../../src/components/Deck";
 import SearchBox from "../../src/components/SearchBox";
 import Space from "../../src/components/Space";
+import { Deck } from "../../src/models/models";
 
 export default function Decks() {
   //get user searched query
@@ -20,15 +24,16 @@ export default function Decks() {
     setQuery("");
   };
 
-  //create new deck
-  const createNewDeck = () => {
-    console.log("Deck created successful");
+  //new deck sheet state
+  const [isNewDeckSheetVisible, setIsNewDeckSheetVisible] = useState(false);
+
+  //new deck sheet toggle
+  const toggleNewDeckSheet = () => {
+    setIsNewDeckSheetVisible(!isNewDeckSheetVisible);
   };
 
-  //create new card
-  const createNewCard = () => {
-    console.log("Card created successful");
-  };
+  //get all decks
+  const decks = useQuery(Deck).filtered("name CONTAINS[c] $0", query);
 
   return (
     <Background>
@@ -43,15 +48,28 @@ export default function Decks() {
 
           {/* button container */}
           <View style={styles.btnContainer}>
-            <AddDeckButton onPress={createNewDeck} />
-            <AddCardButton onPress={createNewCard} />
+            <AddDeckButton onPress={toggleNewDeckSheet} />
+            <AddCardButton />
           </View>
         </View>
 
-        <Space />
+        <Space height={40} />
 
-        <Text>{query}</Text>
+        {/* display all cards */}
+        <FlatList
+          data={decks}
+          keyExtractor={(item) => item._id.toString()}
+          renderItem={({ item }) => (
+            <DeckCard name={item.name} count={item.cards.length} />
+          )}
+        />
       </View>
+
+      {/* add deck bottom sheet */}
+      <AddDeckSheet
+        toggle={toggleNewDeckSheet}
+        visible={isNewDeckSheetVisible}
+      />
     </Background>
   );
 }

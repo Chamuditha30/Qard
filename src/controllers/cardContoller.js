@@ -5,11 +5,10 @@ export const createCard = (realm, data) => {
   try {
     realm.write(() => {
       realm.create("Card", {
-        _id: new Realm.BSON.ObjectId(), //generate unique id
+        _id: new Realm.BSON.ObjectId(), //generate unique card id
         ...data,
       });
     });
-
     return true;
   } catch (error) {
     console.error("Failed to create card:", error);
