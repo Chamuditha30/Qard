@@ -5,7 +5,7 @@ export default function Cards() {
   return (
     <Background>
       <View style={styles.container}>
-        <Text>cards</Text>
+        <Text style={{ fontSize: 80 }}>🤯 🤔 🥳</Text>
       </View>
     </Background>
   );

@@ -10,6 +10,9 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.lightBlue,
         tabBarInactiveTintColor: colors.darkGray,
+        tabBarStyle: {
+          backgroundColor: colors.white,
+        },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "semibold",

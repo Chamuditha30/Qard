@@ -10,10 +10,9 @@ export default function RootLayout() {
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="[deckId]" options={{ headerShown: false }} />
         </Stack>
       </RealmProvider>
     </GestureHandlerRootView>
   );
 }
-
-//adb pull "/data/data/com.anonymous.Qard/files/default.realm" "C:\Users\user\Desktop\default.realm"

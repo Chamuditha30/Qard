@@ -1,19 +1,20 @@
-import { useQuery } from "@realm/react";
-import { useRouter } from "expo-router";
+import { useObject } from "@realm/react";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import AddCardButton from "../../src/components/AddCardButton";
-import AddCardSheet from "../../src/components/AddCardSheet";
-import AddDeckButton from "../../src/components/AddDeckButton";
-import AddDeckSheet from "../../src/components/AddDeckSheet";
-import Background from "../../src/components/Background";
-import DeckCard from "../../src/components/Deck";
-import EditDeckSheet from "../../src/components/EditDeckSheet";
-import SearchBox from "../../src/components/SearchBox";
-import Space from "../../src/components/Space";
-import { Deck } from "../../src/models/models";
+import { BSON } from "realm";
+import AddCardButton from "../src/components/AddCardButton";
+import AddCardSheet from "../src/components/AddCardSheet";
+import AddDeckButton from "../src/components/AddDeckButton";
+import AddDeckSheet from "../src/components/AddDeckSheet";
+import Background from "../src/components/Background";
+import CardComp from "../src/components/Card";
+import EditCardSheet from "../src/components/EditCardSheet";
+import SearchBox from "../src/components/SearchBox";
+import Space from "../src/components/Space";
+import { Deck } from "../src/models/models";
 
-export default function Decks() {
+export default function DeckCards() {
   //get user searched query
   const [query, setQuery] = useState("");
 
@@ -35,18 +36,6 @@ export default function Decks() {
     setIsNewDeckSheetVisible(!isNewDeckSheetVisible);
   };
 
-  //selected deck state
-  const [selectedDeck, setSelectedDeck] = useState(null);
-
-  //edit deck sheet state
-  const [isEditDeckSheetVisible, setIsEditDeckSheetVisible] = useState(false);
-
-  //edit deck sheet toggle
-  const toggleEditDeckSheet = (deck) => {
-    setSelectedDeck(deck);
-    setIsEditDeckSheetVisible(!isEditDeckSheetVisible);
-  };
-
   //new card sheet state
   const [isNewCardSheetVisible, setIsNewCardSheetVisible] = useState(false);
 
@@ -55,16 +44,29 @@ export default function Decks() {
     setIsNewCardSheetVisible(!isNewCardSheetVisible);
   };
 
-  //get all decks
-  const decks = useQuery(Deck).filtered("name CONTAINS[c] $0", query);
+  //selected card state
+  const [selectedCard, setSelectedCard] = useState(null);
 
-  //initialize router to navigate dynamic screens
-  const router = useRouter();
+  //edit deck sheet state
+  const [isEditCardSheetVisible, setIsEditCardSheetVisible] = useState(false);
 
-  //navigate
-  const navigate = (id) => {
-    router.push(`/${id}`);
+  //edit deck sheet toggle
+  const toggleEditCardSheet = (card) => {
+    setSelectedCard(card);
+    setIsEditCardSheetVisible(!isEditCardSheetVisible);
   };
+
+  //get selected deck id
+  const { deckId } = useLocalSearchParams();
+
+  // convert string -> ObjectId
+  const objectId = new BSON.ObjectId(deckId);
+
+  //get deck by id
+  const deck = useObject(Deck, objectId);
+
+  //get all cards and filter
+  const cards = deck.cards.filtered("name CONTAINS[c] $0", query);
 
   return (
     <Background screen={"decks"}>
@@ -88,14 +90,13 @@ export default function Decks() {
 
         {/* display all cards */}
         <FlatList
-          data={decks}
+          data={cards}
           keyExtractor={(item) => item._id.toString()}
           renderItem={({ item }) => (
-            <DeckCard
+            <CardComp
               name={item.name}
-              count={item.cards.length}
-              openEditSheet={() => toggleEditDeckSheet(item)}
-              onPress={() => navigate(item._id)}
+              rate={item.lastRating}
+              openEditSheet={() => toggleEditCardSheet(item)}
             />
           )}
         />
@@ -107,17 +108,17 @@ export default function Decks() {
         visible={isNewDeckSheetVisible}
       />
 
-      {/* edit deck bottom sheet */}
-      <EditDeckSheet
-        toggle={toggleEditDeckSheet}
-        visible={isEditDeckSheetVisible}
-        item={selectedDeck}
-      />
-
       {/* add card bottom sheet */}
       <AddCardSheet
         toggle={toggleNewCardSheet}
         visible={isNewCardSheetVisible}
+      />
+
+      {/* edit card bottom sheet */}
+      <EditCardSheet
+        toggle={toggleEditCardSheet}
+        visible={isEditCardSheetVisible}
+        item={selectedCard}
       />
     </Background>
   );

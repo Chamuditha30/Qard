@@ -6,6 +6,11 @@ export const createCard = (realm, data) => {
     realm.write(() => {
       realm.create("Card", {
         _id: new Realm.BSON.ObjectId(), //generate unique card id
+        lastReviewed: new Date(),
+        nextReview: new Date(),
+        lastIntervalHours: 0,
+        lastRating: data.rating,
+
         ...data,
       });
     });
@@ -13,17 +18,5 @@ export const createCard = (realm, data) => {
   } catch (error) {
     console.error("Failed to create card:", error);
     return false;
-  }
-};
-
-//get all cards
-export const getAllCards = (realm) => {
-  try {
-    const cards = realm.objects("Card");
-
-    return Array.from(cards); //return it as array
-  } catch (error) {
-    console.error("Failed to get cards:", error);
-    return [];
   }
 };

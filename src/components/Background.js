@@ -1,23 +1,25 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, ImageBackground, StyleSheet, View } from "react-native";
+import bgCards from "../../assets/images/bgCards.png";
+import bgDecks from "../../assets/images/bgDecks.png";
 import logo from "../../assets/images/logo.png";
 import colors from "../../src/constants/colors";
 
-export default function Background({ children }) {
+export default function Background({ children, screen }) {
   return (
-    <View style={styles.background}>
-      {/* top gradient box */}
-      <LinearGradient
-        colors={[colors.darkBlue, colors.lightBlue]}
-        style={styles.box}
-      >
-        {/* logo image */}
-        <Image source={logo} style={styles.logo} resizeMode="contain" />
-      </LinearGradient>
+    <ImageBackground
+      source={screen == "decks" ? bgDecks : bgCards}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      {/* logo image */}
+      <Image source={logo} style={styles.logo} resizeMode="contain" />
+
+      {/* bottom box */}
+      {screen !== "decks" && <View style={styles.box} />}
 
       {/* content */}
       <View style={styles.content}>{children}</View>
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -25,24 +27,25 @@ const styles = StyleSheet.create({
   background: {
     width: "100%",
     height: "100%",
-    backgroundColor: colors.white,
   },
   box: {
     width: "100%",
     height: 320,
     position: "absolute",
-    top: 0,
+    bottom: 0,
     left: 0,
-    borderBottomRightRadius: 40,
-    borderBottomLeftRadius: 40,
+    backgroundColor: colors.darkBlue,
+    borderTopRightRadius: 24,
+    borderTopLeftRadius: 24,
+    opacity: 0.8,
   },
   logo: {
-    width: 160,
-    height: 160,
+    width: 208,
+    height: 120,
+    marginTop: 16,
   },
   content: {
     flex: 1,
-    padding: 16,
-    paddingTop: 136,
+    paddingHorizontal: 16,
   },
 });

@@ -1,6 +1,5 @@
-import Feather from "@expo/vector-icons/Feather";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Pressable, StyleSheet, Text, Vibration, View } from "react-native";
+import { Image, Pressable, StyleSheet, Vibration, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   Extrapolate,
@@ -12,16 +11,13 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
+import emoEasy from "../../assets/images/emoEasy.png";
+import emoHard from "../../assets/images/emoHard.png";
+import emoNormal from "../../assets/images/emoNormal.png";
 import colors from "../../src/constants/colors";
 import SinhalaText from "./SinhalaText";
 
-export default function Deck({
-  name,
-  count,
-  openEditSheet,
-  onPress,
-  openDeleteSheet,
-}) {
+export default function Card({ name, rate, onPress, openEditSheet }) {
   //share value for horizontal movement
   const translateX = useSharedValue(0);
 
@@ -128,10 +124,9 @@ export default function Deck({
       transform: [{ scale }],
     };
   });
-
   return (
     <View>
-      {/* deck card */}
+      {/* card */}
       <GestureDetector gesture={panGesture}>
         <Animated.View style={[styles.deckWrapper, animatedCard]}>
           <Pressable
@@ -146,43 +141,39 @@ export default function Deck({
               style={[
                 {
                   backgroundColor:
-                    count <= 10
-                      ? colors.green
-                      : count <= 20
+                    rate === "hard"
+                      ? colors.red
+                      : rate === "normal"
                       ? colors.orange
-                      : colors.red,
+                      : colors.green,
                 },
                 styles.colorLbl,
               ]}
             />
-            <View style={styles.info}>
-              <SinhalaText
-                style={[
-                  {
-                    color:
-                      count <= 10
-                        ? colors.green
-                        : count <= 20
-                        ? colors.orange
-                        : colors.red,
-                  },
-                  styles.name,
-                ]}
-              >
-                {name}
-              </SinhalaText>
-              <Text style={styles.count}>Cards {count}</Text>
-            </View>
-            <Feather
-              name="arrow-up-right"
-              size={24}
-              color={
-                count <= 10
-                  ? colors.green
-                  : count <= 20
-                  ? colors.orange
-                  : colors.red
+            <SinhalaText
+              style={[
+                {
+                  color:
+                    rate === "hard"
+                      ? colors.red
+                      : rate === "normal"
+                      ? colors.orange
+                      : colors.green,
+                },
+                styles.name,
+              ]}
+            >
+              {name}
+            </SinhalaText>
+            <Image
+              source={
+                rate == "hard"
+                  ? emoHard
+                  : rate == "normal"
+                  ? emoNormal
+                  : emoEasy
               }
+              style={styles.emoji}
             />
           </Pressable>
         </Animated.View>
@@ -247,15 +238,13 @@ const styles = StyleSheet.create({
     borderColor: colors.red,
     borderRadius: 16,
   },
-  info: {
-    flex: 1,
-    marginLeft: 16,
-  },
   name: {
     fontSize: 24,
     fontWeight: "bold",
+    flex: 1,
+    marginLeft: 16,
   },
-  count: { fontSize: 16, fontWeight: "bold", color: colors.darkGray },
+  emoji: { width: 40, height: 40 },
   colorLbl: {
     width: 16,
     height: "100%",
