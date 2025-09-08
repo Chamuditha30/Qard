@@ -1,7 +1,7 @@
 import { Picker } from "@react-native-picker/picker";
-import { useQuery, useRealm } from "@realm/react";
+import { useRealm } from "@realm/react";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Image,
   Modal,
@@ -13,27 +13,40 @@ import {
   ToastAndroid,
   View,
 } from "react-native";
-import colors from "../../src/constants/colors";
-import { createCard } from "../controllers/deckController";
-import { Deck } from "../models/models";
-import Button from "./Button";
-import ButtonUpload from "./ButtonUpload";
-import Space from "./Space";
+import colors from "../../constants/colors";
+import { editCard } from "../../controllers/cardContoller";
+import Button from "../elements/Button";
+import ButtonUpload from "../elements/ButtonUpload";
+import Space from "../elements/Space";
 
-export default function AddCardSheet({ toggle, visible }) {
+export default function EditCardSheet({ toggle, visible, item }) {
   //initialize realm
   const realm = useRealm();
 
   //get user input
   const [data, setData] = useState({
+    _id: null,
     name: "",
     frontText: "",
     frontImg: "",
     backText: "",
     backImg: "",
     lastRating: "",
-    deckId: "",
   });
+
+  useEffect(() => {
+    if (visible && item) {
+      setData({
+        _id: item._id,
+        name: item.name,
+        frontText: item.frontText,
+        frontImg: item.frontImg,
+        backText: item.backText,
+        backImg: item.backImg,
+        lastRating: item.lastRating,
+      });
+    }
+  }, [visible, item]);
 
   //handle input changes
   const handleInputChanges = (name, value) => {
@@ -43,36 +56,27 @@ export default function AddCardSheet({ toggle, visible }) {
     }));
   };
 
-  //create new deck
-  const createNewCard = () => {
+  //edit card
+  const updateCard = () => {
     //get data
-    const { name, frontText, frontImg, backText, backImg, lastRating, deckId } =
+    const { _id, name, frontText, frontImg, backText, backImg, lastRating } =
       data;
 
     //validate input
-    if (!name || !frontText || !backText || !lastRating || !deckId) {
+    if (!name || !frontText || !backText || !lastRating) {
       ToastAndroid.show("Enter all fields.", ToastAndroid.SHORT);
       return;
     }
 
-    //create new deck and get response
-    const success = createCard(realm, data);
+    //edit card and get response
+    const success = editCard(realm, data);
 
     ToastAndroid.show(
-      success ? `${name} Card created.` : "Card not created.",
+      success ? `${name} Card updated.` : "Card not updated.",
       ToastAndroid.SHORT
     );
 
     if (success) {
-      setData({
-        name: "",
-        frontText: "",
-        frontImg: "",
-        backText: "",
-        backImg: "",
-        lastRating: "",
-        deckId: "",
-      });
       toggle();
     }
   };
@@ -128,9 +132,6 @@ export default function AddCardSheet({ toggle, visible }) {
       setData((prev) => ({ ...prev, backImg: result.assets[0].uri }));
     }
   };
-
-  //get all decks names
-  const decks = useQuery(Deck);
 
   return (
     <Modal transparent visible={visible}>
@@ -205,19 +206,6 @@ export default function AddCardSheet({ toggle, visible }) {
         </View>
         <Space />
 
-        {/* deck picker */}
-        <Picker
-          selectedValue={data.deckId}
-          onValueChange={(deckId) => handleInputChanges("deckId", deckId)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Select deck" value="" />
-          {decks.map((deck) => (
-            <Picker.Item key={deck._id} label={deck.name} value={deck._id} />
-          ))}
-        </Picker>
-        <Space />
-
         {/* rate picker */}
         <Picker
           selectedValue={data.lastRating}
@@ -231,7 +219,7 @@ export default function AddCardSheet({ toggle, visible }) {
         </Picker>
         <Space />
 
-        <Button text={"Save"} onPress={createNewCard} />
+        <Button text={"Save"} onPress={updateCard} />
         <Space height={80} />
       </ScrollView>
     </Modal>

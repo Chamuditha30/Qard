@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import Background from "../../src/components/Background";
+import Background from "../../src/components/elements/Background";
 
 export default function Cards() {
   return (

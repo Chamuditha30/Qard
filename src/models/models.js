@@ -1,7 +1,7 @@
 import Realm from "realm";
 
 //card model
-class Card extends Realm.Object {
+export class Card extends Realm.Object {
   static schema = {
     name: "Card",
     primaryKey: "_id",
@@ -21,16 +21,14 @@ class Card extends Realm.Object {
 }
 
 //deck model
-class Deck extends Realm.Object {
+export class Deck extends Realm.Object {
   static schema = {
     name: "Deck",
     primaryKey: "_id",
     properties: {
       _id: "objectId",
       name: "string",
-      cards: { type: "list", objectType: "Card" },
+      cards: "Card[]", // One to many: Deck → multiple Cards
     },
   };
 }
-
-export { Card, Deck };

@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",        // Treat project root as base for imports
+    "paths": {}            // Optional: you can define path aliases here
+  },
+  "include": ["./*"]       // Adjust if your source files are in a different folder
+}

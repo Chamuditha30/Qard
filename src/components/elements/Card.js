@@ -11,13 +11,19 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
-import emoEasy from "../../assets/images/emoEasy.png";
-import emoHard from "../../assets/images/emoHard.png";
-import emoNormal from "../../assets/images/emoNormal.png";
-import colors from "../../src/constants/colors";
-import SinhalaText from "./SinhalaText";
+import emoEasy from "../../../assets/images/emoEasy.png";
+import emoHard from "../../../assets/images/emoHard.png";
+import emoNormal from "../../../assets/images/emoNormal.png";
+import colors from "../../constants/colors";
+import SinhalaText from "../elements/SinhalaText";
 
-export default function Card({ name, rate, onPress, openEditSheet }) {
+export default function Card({
+  name,
+  rate,
+  onPress,
+  openEditSheet,
+  openDeleteSheet,
+}) {
   //share value for horizontal movement
   const translateX = useSharedValue(0);
 

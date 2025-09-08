@@ -1,12 +1,12 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Pressable, StyleSheet } from "react-native";
-import colors from "../../src/constants/colors";
+import colors from "../../constants/colors";
 
-export default function AddCardButton({ onPress }) {
+export default function AddDeckButton({ onPress }) {
   return (
     <Pressable style={styles.button} onPress={onPress}>
       <MaterialCommunityIcons
-        name="card-plus"
+        name="view-grid-plus"
         size={32}
         color={colors.lightBlue}
       />

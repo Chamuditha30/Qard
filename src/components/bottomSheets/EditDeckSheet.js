@@ -1,5 +1,5 @@
 import { useRealm } from "@realm/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -9,20 +9,23 @@ import {
   ToastAndroid,
   View,
 } from "react-native";
-import colors from "../../src/constants/colors";
-import { createDeck } from "../controllers/deckController";
-import Button from "./Button";
-import Space from "./Space";
+import colors from "../../constants/colors";
+import { editDeck } from "../../controllers/deckController";
+import Button from "../elements/Button";
+import Space from "../elements/Space";
 
-export default function AddDeckSheet({ toggle, visible }) {
+export default function EditDeckSheet({ toggle, visible, item }) {
   //initialize realm
   const realm = useRealm();
 
   //get user input
-  const [data, setData] = useState({
-    name: "",
-    cards: [],
-  });
+  const [data, setData] = useState({ _id: null, name: "" });
+
+  useEffect(() => {
+    if (visible && item) {
+      setData({ _id: item._id, name: item.name });
+    }
+  }, [visible, item]);
 
   //handle input changes
   const handleInputChanges = (name, value) => {
@@ -33,9 +36,9 @@ export default function AddDeckSheet({ toggle, visible }) {
   };
 
   //create new deck
-  const createNewDeck = () => {
+  const updateDeck = () => {
     //get data
-    const { name, cards } = data;
+    const { _id, name } = data;
 
     //validate input
     if (!name) {
@@ -43,16 +46,15 @@ export default function AddDeckSheet({ toggle, visible }) {
       return;
     }
 
-    //create new deck and get response
-    const success = createDeck(realm, data);
+    //edit deck and get response
+    const success = editDeck(realm, data);
 
     ToastAndroid.show(
-      success ? `${name} Deck created.` : "Deck not created.",
+      success ? `${name} Deck updated.` : "Deck not created.",
       ToastAndroid.SHORT
     );
 
     if (success) {
-      setData({ name: "", cards: [] });
       toggle();
     }
   };
@@ -62,12 +64,11 @@ export default function AddDeckSheet({ toggle, visible }) {
       <Pressable
         style={styles.backdrop}
         onPress={() => {
-          setData({ name: "", cards: [] });
           toggle();
         }}
       />
       <View style={styles.bottomSheet}>
-        <Text style={styles.title}>New Deck</Text>
+        <Text style={styles.title}>Edit Deck</Text>
         <Space height={40} />
         <TextInput
           placeholder="Deck name"
@@ -76,7 +77,7 @@ export default function AddDeckSheet({ toggle, visible }) {
           onChangeText={(text) => handleInputChanges("name", text)}
         />
         <Space />
-        <Button text={"Save"} onPress={createNewDeck} />
+        <Button type={"save"} text={"Save"} onPress={updateDeck} />
       </View>
     </Modal>
   );

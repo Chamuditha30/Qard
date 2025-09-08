@@ -12,8 +12,8 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
-import colors from "../../src/constants/colors";
-import SinhalaText from "./SinhalaText";
+import colors from "../../constants/colors";
+import SinhalaText from "../elements/SinhalaText";
 
 export default function Deck({
   name,
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-  count: { fontSize: 16, fontWeight: "bold", color: colors.darkGray },
+  count: { fontSize: 16, fontWeight: "bold", color: "rgba(0,0,0,0.5)" },
   colorLbl: {
     width: 16,
     height: "100%",

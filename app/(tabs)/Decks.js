@@ -1,39 +1,44 @@
 import { useQuery } from "@realm/react";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import AddCardButton from "../../src/components/AddCardButton";
-import AddCardSheet from "../../src/components/AddCardSheet";
-import AddDeckButton from "../../src/components/AddDeckButton";
-import AddDeckSheet from "../../src/components/AddDeckSheet";
-import Background from "../../src/components/Background";
-import DeckCard from "../../src/components/Deck";
-import EditDeckSheet from "../../src/components/EditDeckSheet";
-import SearchBox from "../../src/components/SearchBox";
-import Space from "../../src/components/Space";
+import React, { useCallback, useState } from "react";
+import { FlatList, Keyboard, StyleSheet, View } from "react-native";
+import AddCardSheet from "../../src/components/bottomSheets/AddCardSheet";
+import AddDeckSheet from "../../src/components/bottomSheets/AddDeckSheet";
+import DeleteDeckSheet from "../../src/components/bottomSheets/DeleteDeckSheet";
+import EditDeckSheet from "../../src/components/bottomSheets/EditDeckSheet";
+import AddCardButton from "../../src/components/elements/AddCardButton";
+import AddDeckButton from "../../src/components/elements/AddDeckButton";
+import Background from "../../src/components/elements/Background";
+import DeckCard from "../../src/components/elements/Deck";
+import SearchBox from "../../src/components/elements/SearchBox";
+import Space from "../../src/components/elements/Space";
 import { Deck } from "../../src/models/models";
+
+//use react memo with CardComp to prevent unnecessary re renders
+const MemoDeckCard = React.memo(DeckCard);
 
 export default function Decks() {
   //get user searched query
   const [query, setQuery] = useState("");
 
   //handle search bar input changes
-  const handleQueryChanges = (text) => {
+  const handleQueryChanges = useCallback((text) => {
     setQuery(text);
-  };
+  }, []);
 
   //clear search bar
-  const clearSearchbar = () => {
+  const clearSearchbar = useCallback(() => {
     setQuery("");
-  };
+    Keyboard.dismiss();
+  }, []);
 
   //new deck sheet state
   const [isNewDeckSheetVisible, setIsNewDeckSheetVisible] = useState(false);
 
   //new deck sheet toggle
-  const toggleNewDeckSheet = () => {
-    setIsNewDeckSheetVisible(!isNewDeckSheetVisible);
-  };
+  const toggleNewDeckSheet = useCallback(() => {
+    setIsNewDeckSheetVisible((prev) => !prev);
+  }, []);
 
   //selected deck state
   const [selectedDeck, setSelectedDeck] = useState(null);
@@ -42,18 +47,36 @@ export default function Decks() {
   const [isEditDeckSheetVisible, setIsEditDeckSheetVisible] = useState(false);
 
   //edit deck sheet toggle
-  const toggleEditDeckSheet = (deck) => {
+  const toggleEditDeckSheet = useCallback((deck) => {
     setSelectedDeck(deck);
-    setIsEditDeckSheetVisible(!isEditDeckSheetVisible);
-  };
+    setIsEditDeckSheetVisible((prev) => !prev);
+  }, []);
+
+  //selected deck id to delete
+  const [selectedDeckId, setSelectedDeckId] = useState(null);
+
+  //delete deck sheet state
+  const [isDeleteDeckSheetVisible, setIsDeleteDeckSheetVisible] =
+    useState(false);
+
+  //delete selected deck
+  const selectDeckToDelete = useCallback((deck) => {
+    if (!deck?._id) return;
+    setSelectedDeckId(deck._id);
+  }, []);
+
+  //delete deck sheet toggle
+  const toggleDeleteDeckSheet = useCallback(() => {
+    setIsDeleteDeckSheetVisible((prev) => !prev);
+  }, []);
 
   //new card sheet state
   const [isNewCardSheetVisible, setIsNewCardSheetVisible] = useState(false);
 
   //new card sheet toggle
-  const toggleNewCardSheet = () => {
-    setIsNewCardSheetVisible(!isNewCardSheetVisible);
-  };
+  const toggleNewCardSheet = useCallback(() => {
+    setIsNewCardSheetVisible((prev) => !prev);
+  }, []);
 
   //get all decks
   const decks = useQuery(Deck).filtered("name CONTAINS[c] $0", query);
@@ -62,9 +85,12 @@ export default function Decks() {
   const router = useRouter();
 
   //navigate
-  const navigate = (id) => {
-    router.push(`/${id}`);
-  };
+  const navigate = useCallback(
+    (id) => {
+      router.push(`/${id}`);
+    },
+    [router]
+  );
 
   return (
     <Background screen={"decks"}>
@@ -91,10 +117,14 @@ export default function Decks() {
           data={decks}
           keyExtractor={(item) => item._id.toString()}
           renderItem={({ item }) => (
-            <DeckCard
+            <MemoDeckCard
               name={item.name}
               count={item.cards.length}
               openEditSheet={() => toggleEditDeckSheet(item)}
+              openDeleteSheet={() => {
+                selectDeckToDelete(item);
+                toggleDeleteDeckSheet();
+              }}
               onPress={() => navigate(item._id)}
             />
           )}
@@ -102,23 +132,38 @@ export default function Decks() {
       </View>
 
       {/* add deck bottom sheet */}
-      <AddDeckSheet
-        toggle={toggleNewDeckSheet}
-        visible={isNewDeckSheetVisible}
-      />
+      {isNewDeckSheetVisible && (
+        <AddDeckSheet
+          toggle={toggleNewDeckSheet}
+          visible={isNewDeckSheetVisible}
+        />
+      )}
 
       {/* edit deck bottom sheet */}
-      <EditDeckSheet
-        toggle={toggleEditDeckSheet}
-        visible={isEditDeckSheetVisible}
-        item={selectedDeck}
-      />
+      {isEditDeckSheetVisible && (
+        <EditDeckSheet
+          toggle={toggleEditDeckSheet}
+          visible={isEditDeckSheetVisible}
+          item={selectedDeck}
+        />
+      )}
+
+      {/* delete deck bottom sheet */}
+      {isDeleteDeckSheetVisible && (
+        <DeleteDeckSheet
+          toggle={toggleDeleteDeckSheet}
+          visible={isDeleteDeckSheetVisible}
+          deckId={selectedDeckId}
+        />
+      )}
 
       {/* add card bottom sheet */}
-      <AddCardSheet
-        toggle={toggleNewCardSheet}
-        visible={isNewCardSheetVisible}
-      />
+      {isNewCardSheetVisible && (
+        <AddCardSheet
+          toggle={toggleNewCardSheet}
+          visible={isNewCardSheetVisible}
+        />
+      )}
     </Background>
   );
 }

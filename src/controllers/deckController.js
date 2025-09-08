@@ -36,36 +36,31 @@ export const editDeck = (realm, data) => {
   }
 };
 
-//add card into deck
-export const createCard = (realm, data) => {
+//delete deck
+export const deleteDeck = (realm, deckId) => {
   try {
-    //get deck by id
-    const deck = realm.objectForPrimaryKey("Deck", data.deckId);
-
-    if (!deck) {
-      console.error("Deck not found");
-      return false;
-    }
-
-    //add card to deck
     realm.write(() => {
-      deck.cards.push({
-        _id: new Realm.BSON.ObjectId(), //generate unique card id
-        lastReviewed: new Date(),
-        nextReview: new Date(),
-        lastIntervalHours: 0,
-        ...data,
-      });
+      //get selected deck
+      const deck = realm.objectForPrimaryKey("Deck", deckId);
+
+      if (!deck) {
+        console.error("Deck not found");
+        return false;
+      }
+
+      //delete all cards in the deck
+      if (deck.cards && deck.cards.length > 0) {
+        //delete all cards in the cards array
+        realm.delete(deck.cards);
+      }
+
+      //delete deck
+      realm.delete(deck);
     });
+
     return true;
   } catch (error) {
-    console.error("Failed to add card to deck:", error);
+    console.error("Failed to delete deck:", error);
     return false;
   }
-};
-
-//edit card by id
-export const editCard = (realm, data) => {
-  try {
-  } catch (error) {}
 };

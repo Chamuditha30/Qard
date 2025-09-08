@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Dimensions, StyleSheet, TextInput, View } from "react-native";
-import colors from "../../src/constants/colors";
+import colors from "../../constants/colors";
 
 export default function SearchBox({ value, onChangeText, clearSearchbar }) {
   return (

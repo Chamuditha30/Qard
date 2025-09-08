@@ -1,8 +1,8 @@
 import { Image, ImageBackground, StyleSheet, View } from "react-native";
-import bgCards from "../../assets/images/bgCards.png";
-import bgDecks from "../../assets/images/bgDecks.png";
-import logo from "../../assets/images/logo.png";
-import colors from "../../src/constants/colors";
+import bgCards from "../../../assets/images/bgCards.png";
+import bgDecks from "../../../assets/images/bgDecks.png";
+import logo from "../../../assets/images/logo.png";
+import colors from "../../constants/colors";
 
 export default function Background({ children, screen }) {
   return (
