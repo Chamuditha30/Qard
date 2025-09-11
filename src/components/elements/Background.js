@@ -4,7 +4,7 @@ import bgDecks from "../../../assets/images/bgDecks.png";
 import logo from "../../../assets/images/logo.png";
 import colors from "../../constants/colors";
 
-export default function Background({ children, screen }) {
+export default function Background({ children, screen, haveCards }) {
   return (
     <ImageBackground
       source={screen == "decks" ? bgDecks : bgCards}
@@ -15,7 +15,7 @@ export default function Background({ children, screen }) {
       <Image source={logo} style={styles.logo} resizeMode="contain" />
 
       {/* bottom box */}
-      {screen !== "decks" && <View style={styles.box} />}
+      {haveCards && <View style={styles.box} />}
 
       {/* content */}
       <View style={styles.content}>{children}</View>

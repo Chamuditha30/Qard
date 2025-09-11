@@ -14,7 +14,7 @@ export class Card extends Realm.Object {
       backImg: "string?",
       lastReviewed: "date",
       nextReview: "date",
-      lastIntervalHours: "int",
+      lastIntervalHours: "double",
       lastRating: "string",
     },
   };

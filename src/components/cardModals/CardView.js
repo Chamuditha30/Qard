@@ -34,8 +34,11 @@ export default function CardView({ toggle, visible, item }) {
   const [viewerImages, setViewerImages] = useState([]);
 
   //toggle image viewer
-  const openViewer = (imgUri) => {
-    setViewerImages([{ uri: "file://" + imgUri }]);
+  const openViewer = (imgUri1, imgUri2) => {
+    setViewerImages([
+      { uri: "file://" + imgUri1 },
+      { uri: "file://" + imgUri2 },
+    ]);
     setImageViewerVisible(true);
   };
 
@@ -51,7 +54,13 @@ export default function CardView({ toggle, visible, item }) {
           <MaterialCommunityIcons
             name="close-box"
             size={56}
-            color={colors.white}
+            color={
+              item.lastRating == "hard"
+                ? colors.red
+                : item.lastRating == "normal"
+                ? colors.orange
+                : colors.green
+            }
           />
         </Pressable>
 
@@ -59,12 +68,26 @@ export default function CardView({ toggle, visible, item }) {
 
         {/* card info */}
         <ScrollView style={styles.info}>
-          <SinhalaText style={styles.name}>{item.name}</SinhalaText>
+          <SinhalaText
+            style={[
+              {
+                color:
+                  item.lastRating == "hard"
+                    ? colors.red
+                    : item.lastRating == "normal"
+                    ? colors.orange
+                    : colors.green,
+              },
+              styles.name,
+            ]}
+          >
+            {item.name}
+          </SinhalaText>
 
           <Space height={40} />
 
           {item.frontImg && (
-            <Pressable onPress={() => openViewer(item.frontImg)}>
+            <Pressable onPress={() => openViewer(item.frontImg, item.backImg)}>
               <Image
                 source={{ uri: "file://" + item.frontImg }}
                 style={styles.image}
@@ -79,7 +102,7 @@ export default function CardView({ toggle, visible, item }) {
           <Space height={40} />
 
           {item.backImg && (
-            <Pressable onPress={() => openViewer(item.backImg)}>
+            <Pressable onPress={() => openViewer(item.backImg, item.frontImg)}>
               <Image
                 source={{ uri: "file://" + item.backImg }}
                 style={styles.image}
@@ -121,8 +144,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: 28,
-    color: colors.white,
+    fontSize: 32,
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -132,7 +154,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
   },
   text: {
-    fontSize: 20,
+    fontSize: 16,
     color: colors.darkBlue,
     fontWeight: "bold",
     textAlign: "justify",

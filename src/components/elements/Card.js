@@ -29,7 +29,7 @@ export default function Card({
 
   //vibrate alert
   const vibrationAlert = () => {
-    Vibration.vibrate(50);
+    Vibration.vibrate(100);
     console.log("Vibrated");
   };
 
@@ -134,9 +134,19 @@ export default function Card({
     <View>
       {/* card */}
       <GestureDetector gesture={panGesture}>
-        <Animated.View style={[styles.deckWrapper, animatedCard]}>
+        <Animated.View style={[styles.cardWrapper, animatedCard]}>
           <Pressable
-            style={styles.deck}
+            style={[
+              {
+                borderColor:
+                  rate === "hard"
+                    ? colors.red
+                    : rate === "normal"
+                    ? colors.orange
+                    : colors.green,
+              },
+              styles.card,
+            ]}
             android_ripple={{
               color: "#E5E7FF",
               borderless: false,
@@ -191,7 +201,7 @@ export default function Card({
           translateX.value = withTiming(0);
           openEditSheet();
         }}
-        style={{ position: "absolute", right: 0, width: 104, height: 104 }}
+        style={{ position: "absolute", right: 0, width: 80, height: 80 }}
       >
         <Animated.View style={[styles.editBtn, animatedEditBtn]}>
           <MaterialCommunityIcons
@@ -208,7 +218,7 @@ export default function Card({
           translateX.value = withTiming(0);
           openDeleteSheet();
         }}
-        style={{ position: "absolute", left: 0, width: 104, height: 104 }}
+        style={{ position: "absolute", left: 0, width: 80, height: 80 }}
       >
         <Animated.View style={[styles.deleteBtn, animatedDeleteBtn]}>
           <MaterialCommunityIcons
@@ -223,41 +233,40 @@ export default function Card({
 }
 
 const styles = StyleSheet.create({
-  deckWrapper: {
+  cardWrapper: {
     borderRadius: 16,
     overflow: "hidden",
     marginBottom: 16,
     elevation: 4,
     zIndex: 1,
   },
-  deck: {
+  card: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingRight: 16,
     backgroundColor: colors.white,
     width: "100%",
-    height: 104,
-    borderTopWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.red,
+    height: 80,
+    borderTopWidth: 2,
+    borderRightWidth: 2,
+    borderBottomWidth: 2,
     borderRadius: 16,
   },
   name: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
     flex: 1,
     marginLeft: 16,
   },
-  emoji: { width: 40, height: 40 },
+  emoji: { width: 32, height: 32 },
   colorLbl: {
     width: 16,
     height: "100%",
   },
   editBtn: {
-    width: 104,
-    height: 104,
+    width: 80,
+    height: 80,
     backgroundColor: colors.green,
     position: "absolute",
     right: 0,
@@ -267,8 +276,8 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   deleteBtn: {
-    width: 104,
-    height: 104,
+    width: 80,
+    height: 80,
     backgroundColor: colors.red,
     position: "absolute",
     left: 0,

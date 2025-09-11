@@ -7,6 +7,7 @@ export default function SearchBox({ value, onChangeText, clearSearchbar }) {
     <View style={styles.searchBox}>
       <TextInput
         placeholder="Search"
+        placeholderTextColor={colors.darkGray}
         style={styles.input}
         value={value}
         onChangeText={onChangeText}

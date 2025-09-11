@@ -1,24 +1,32 @@
 import Realm from "realm";
-import { getNextReview, getUpdatedInterval } from "../helpers/cardHelpers";
+import {
+  getInterval,
+  getNextReviewDate,
+  getUpdatedIntervalForReview,
+  getUpdatedReviewDate,
+} from "../helpers/cardHelpers";
+import { scheduleNotification } from "../helpers/notificationHelpers";
 
 //create new card
 export const createCard = (realm, data) => {
   try {
+    //get selected deck
+    const deck = realm.objectForPrimaryKey("Deck", data.deckId);
+
+    if (!deck) {
+      console.error("Deck not found");
+      return false;
+    }
+
+    //get new interval
+    const lastIntervalHours = getInterval(data.lastRating);
+
+    //get next review
+    // const nextReview = getNextReviewDate(lastIntervalHours);
+    const nextReview = new Date();
+    console.log(nextReview.toLocaleString);
+
     realm.write(() => {
-      //get selected deck
-      const deck = realm.objectForPrimaryKey("Deck", data.deckId);
-
-      if (!deck) {
-        console.error("Deck not found");
-        return false;
-      }
-
-      //get new interval
-      const lastIntervalHours = getUpdatedInterval(0, null, data.lastRating);
-
-      //get next review
-      const nextReview = getNextReview(lastIntervalHours, data.lastRating);
-
       const card = realm.create("Card", {
         _id: new Realm.BSON.ObjectId(), //generate unique card id
         lastReviewed: new Date(),
@@ -31,6 +39,9 @@ export const createCard = (realm, data) => {
       deck.cards.push(card);
     });
 
+    //create notification
+    scheduleNotification(nextReview);
+
     return true;
   } catch (error) {
     console.error("Failed to create card:", error);
@@ -41,25 +52,23 @@ export const createCard = (realm, data) => {
 //edit card
 export const editCard = (realm, data) => {
   try {
+    //find card using id
+    const card = realm.objectForPrimaryKey("Card", data._id);
+
+    if (!card) {
+      console.error("Card not found");
+      return false;
+    }
+
+    //get new interval and next review if rate changed
+    const { lastIntervalHours, nextReview, updated } = getUpdatedReviewDate(
+      card.lastRating,
+      data.lastRating,
+      card.lastIntervalHours,
+      card.nextReview
+    );
+
     realm.write(() => {
-      //find card using id
-      const card = realm.objectForPrimaryKey("Card", data._id);
-
-      if (!card) {
-        console.error("Card not found");
-        return false;
-      }
-
-      //get new interval
-      const lastIntervalHours = getUpdatedInterval(
-        card.lastIntervalHours,
-        card.lastRating,
-        data.lastRating
-      );
-
-      //get next review
-      const nextReview = getNextReview(lastIntervalHours, data.lastRating);
-
       realm.create(
         "Card",
         {
@@ -72,6 +81,12 @@ export const editCard = (realm, data) => {
         "modified"
       );
     });
+
+    //create notification if review changed
+    if (updated) {
+      scheduleNotification(nextReview);
+    }
+
     return true;
   } catch (error) {
     console.error("Failed to edit card:", error);
@@ -98,6 +113,48 @@ export const deleteCard = (realm, cardId) => {
     return true;
   } catch (error) {
     console.error("Failed to delete card:", error);
+    return false;
+  }
+};
+
+//review card
+export const reviewCard = (realm, cardId, lastRating) => {
+  try {
+    //find card using id
+    const card = realm.objectForPrimaryKey("Card", cardId);
+
+    if (!card) {
+      console.error("Card not found");
+      return false;
+    }
+
+    //reset interval if rating changed, else multiply
+    const lastIntervalHours = getUpdatedIntervalForReview(
+      card.lastRating,
+      lastRating,
+      card.lastIntervalHours
+    );
+
+    const nextReview = getNextReviewDate(lastIntervalHours);
+
+    realm.write(() => {
+      realm.create(
+        "Card",
+        {
+          _id: cardId,
+          lastIntervalHours,
+          nextReview,
+          lastRating,
+          lastReviewed: new Date(),
+        },
+        "modified"
+      );
+    });
+    scheduleNotification(nextReview);
+
+    return true;
+  } catch (error) {
+    console.error("Failed to review card:", error);
     return false;
   }
 };

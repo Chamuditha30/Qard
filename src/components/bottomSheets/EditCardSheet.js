@@ -3,6 +3,7 @@ import { useRealm } from "@realm/react";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
 import {
+  Dimensions,
   Image,
   Modal,
   Pressable,
@@ -18,6 +19,8 @@ import { editCard } from "../../controllers/cardContoller";
 import Button from "../elements/Button";
 import ButtonUpload from "../elements/ButtonUpload";
 import Space from "../elements/Space";
+
+const { height } = Dimensions.get("window");
 
 export default function EditCardSheet({ toggle, visible, item }) {
   //initialize realm
@@ -148,12 +151,14 @@ export default function EditCardSheet({ toggle, visible, item }) {
         }}
         style={styles.bottomSheet}
       >
-        <Text style={styles.title}>New Card</Text>
+        <Text style={styles.title}>Edit Card</Text>
         <Space height={40} />
 
         {/* card name input */}
         <TextInput
           placeholder="Card name"
+          placeholderTextColor={colors.darkGray}
+          maxLength={20}
           style={styles.input}
           value={data.name}
           onChangeText={(text) => handleInputChanges("name", text)}
@@ -163,6 +168,7 @@ export default function EditCardSheet({ toggle, visible, item }) {
         {/* front text input */}
         <TextInput
           placeholder="Front text"
+          placeholderTextColor={colors.darkGray}
           multiline={true}
           numberOfLines={5}
           textAlignVertical="top"
@@ -186,6 +192,7 @@ export default function EditCardSheet({ toggle, visible, item }) {
         {/* back text input */}
         <TextInput
           placeholder="Back text"
+          placeholderTextColor={colors.darkGray}
           multiline={true}
           numberOfLines={5}
           textAlignVertical="top"
@@ -198,7 +205,7 @@ export default function EditCardSheet({ toggle, visible, item }) {
         {/* back image input */}
         <View style={styles.uploadContainer}>
           <ButtonUpload onPress={pickBackImg} isUploaded={data.backImg} />
-          {data.frontImg ? (
+          {data.backImg ? (
             <Image source={{ uri: data.backImg }} style={styles.imgPrev} />
           ) : (
             <Text style={styles.formatHint}>(.jpg / .jpeg / .png)</Text>
@@ -211,6 +218,7 @@ export default function EditCardSheet({ toggle, visible, item }) {
           selectedValue={data.lastRating}
           onValueChange={(rate) => handleInputChanges("lastRating", rate)}
           style={styles.picker}
+          dropdownIconColor={colors.darkGray}
         >
           <Picker.Item label="Select rate" value="" />
           <Picker.Item label="Hard" value="hard" />
@@ -219,7 +227,7 @@ export default function EditCardSheet({ toggle, visible, item }) {
         </Picker>
         <Space />
 
-        <Button text={"Save"} onPress={updateCard} />
+        <Button type={"save"} text={"Save"} onPress={updateCard} />
         <Space height={80} />
       </ScrollView>
     </Modal>
@@ -234,7 +242,7 @@ const styles = StyleSheet.create({
   },
   bottomSheet: {
     width: "100%",
-    height: 560,
+    height: (height / 3) * 2,
     backgroundColor: colors.white,
     // alignItems: "center",
     padding: 16,
@@ -277,5 +285,6 @@ const styles = StyleSheet.create({
     borderColor: colors.darkGray,
     padding: 4,
     fontSize: 20,
+    color: colors.black,
   },
 });

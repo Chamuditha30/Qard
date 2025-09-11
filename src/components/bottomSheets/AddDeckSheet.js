@@ -70,6 +70,8 @@ export default function AddDeckSheet({ toggle, visible }) {
         <Space height={40} />
         <TextInput
           placeholder="Deck name"
+          placeholderTextColor={colors.darkGray}
+          maxLength={20}
           style={styles.input}
           value={data.name}
           onChangeText={(text) => handleInputChanges("name", text)}

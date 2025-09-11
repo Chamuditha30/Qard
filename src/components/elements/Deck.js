@@ -27,7 +27,7 @@ export default function Deck({
 
   //vibrate alert
   const vibrationAlert = () => {
-    Vibration.vibrate(50);
+    Vibration.vibrate(100);
     console.log("Vibrated");
   };
 
@@ -135,7 +135,17 @@ export default function Deck({
       <GestureDetector gesture={panGesture}>
         <Animated.View style={[styles.deckWrapper, animatedCard]}>
           <Pressable
-            style={styles.deck}
+            style={[
+              {
+                borderColor:
+                  count <= 10
+                    ? colors.green
+                    : count <= 20
+                    ? colors.orange
+                    : colors.red,
+              },
+              styles.deck,
+            ]}
             android_ripple={{
               color: "#E5E7FF",
               borderless: false,
@@ -194,12 +204,17 @@ export default function Deck({
           translateX.value = withTiming(0);
           openEditSheet();
         }}
-        style={{ position: "absolute", right: 0, width: 104, height: 104 }}
+        style={{
+          position: "absolute",
+          right: 0,
+          width: 80,
+          height: 80,
+        }}
       >
         <Animated.View style={[styles.editBtn, animatedEditBtn]}>
           <MaterialCommunityIcons
             name="square-edit-outline"
-            size={32}
+            size={40}
             color={colors.white}
           />
         </Animated.View>
@@ -211,12 +226,12 @@ export default function Deck({
           translateX.value = withTiming(0);
           openDeleteSheet();
         }}
-        style={{ position: "absolute", left: 0, width: 104, height: 104 }}
+        style={{ position: "absolute", left: 0, width: 80, height: 80 }}
       >
         <Animated.View style={[styles.deleteBtn, animatedDeleteBtn]}>
           <MaterialCommunityIcons
             name="delete-empty-outline"
-            size={32}
+            size={40}
             color={colors.white}
           />
         </Animated.View>
@@ -240,11 +255,10 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     backgroundColor: colors.white,
     width: "100%",
-    height: 104,
-    borderTopWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.red,
+    height: 80,
+    borderTopWidth: 2,
+    borderRightWidth: 2,
+    borderBottomWidth: 2,
     borderRadius: 16,
   },
   info: {
@@ -252,17 +266,17 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   name: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
   },
-  count: { fontSize: 16, fontWeight: "bold", color: "rgba(0,0,0,0.5)" },
+  count: { fontSize: 14, fontWeight: "bold", color: "rgba(0,0,0,0.5)" },
   colorLbl: {
     width: 16,
     height: "100%",
   },
   editBtn: {
-    width: 104,
-    height: 104,
+    width: 80,
+    height: 80,
     backgroundColor: colors.green,
     position: "absolute",
     right: 0,
@@ -272,8 +286,8 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   deleteBtn: {
-    width: 104,
-    height: 104,
+    width: 80,
+    height: 80,
     backgroundColor: colors.red,
     position: "absolute",
     left: 0,
