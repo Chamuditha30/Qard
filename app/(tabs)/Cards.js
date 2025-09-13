@@ -1,9 +1,11 @@
 import { useQuery } from "@realm/react";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import FlashCard from "../../src/components/cardModals/FlashCard";
 import Progressbar from "../../src/components/cardModals/Progressbar";
 import Background from "../../src/components/elements/Background";
+import EmptyState from "../../src/components/elements/EmptyState";
 import { Card } from "../../src/models/models";
 
 export default function Cards() {
@@ -15,9 +17,11 @@ export default function Cards() {
   //set initial card counts
   const [initialCardCount, setInitialCardCount] = useState(cards.length);
 
-  useEffect(() => {
-    setInitialCardCount(cards.length);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      setInitialCardCount(cards.length);
+    }, [cards.length])
+  );
 
   //calculate progress
   const reviewedCount = initialCardCount - cards.length + 1;
@@ -27,16 +31,20 @@ export default function Cards() {
     <Background screen={"cards"} haveCards={cards.length > 0}>
       <View style={styles.container}>
         {/* display all cards */}
-        {cards.map((item, index) => (
-          <FlashCard
-            key={item._id}
-            item={item}
-            style={{
-              position: "absolute",
-              zIndex: cards.length - index,
-            }}
-          />
-        ))}
+        {cards.length > 0 ? (
+          cards.map((item, index) => (
+            <FlashCard
+              key={item._id}
+              item={item}
+              style={{
+                position: "absolute",
+                zIndex: cards.length - index,
+              }}
+            />
+          ))
+        ) : (
+          <EmptyState screen={"cards"} />
+        )}
       </View>
 
       {/* progressbar */}

@@ -3,7 +3,6 @@ import {
   getInterval,
   getNextReviewDate,
   getUpdatedIntervalForReview,
-  getUpdatedReviewDate,
 } from "../helpers/cardHelpers";
 import { scheduleNotification } from "../helpers/notificationHelpers";
 
@@ -22,16 +21,16 @@ export const createCard = (realm, data) => {
     const lastIntervalHours = getInterval(data.lastRating);
 
     //get next review
-    // const nextReview = getNextReviewDate(lastIntervalHours);
-    const nextReview = new Date();
-    console.log(nextReview.toLocaleString);
+    const nextReview = getNextReviewDate(lastIntervalHours);
+    // const nextReview = new Date();
+    // console.log(nextReview.toLocaleString);
 
     realm.write(() => {
       const card = realm.create("Card", {
         _id: new Realm.BSON.ObjectId(), //generate unique card id
         lastReviewed: new Date(),
-        nextReview,
-        lastIntervalHours,
+        nextReview: nextReview,
+        lastIntervalHours: lastIntervalHours,
         ...data,
       });
 
@@ -61,20 +60,20 @@ export const editCard = (realm, data) => {
     }
 
     //get new interval and next review if rate changed
-    const { lastIntervalHours, nextReview, updated } = getUpdatedReviewDate(
-      card.lastRating,
-      data.lastRating,
-      card.lastIntervalHours,
-      card.nextReview
-    );
+    // const { lastIntervalHours, nextReview, updated } = getUpdatedReviewDate(
+    //   card.lastRating,
+    //   data.lastRating,
+    //   card.lastIntervalHours,
+    //   card.nextReview
+    // );
 
     realm.write(() => {
       realm.create(
         "Card",
         {
           _id: data._id,
-          lastIntervalHours,
-          nextReview,
+          // lastIntervalHours,
+          // nextReview,
           lastReviewed: new Date(),
           ...data,
         },
@@ -83,9 +82,9 @@ export const editCard = (realm, data) => {
     });
 
     //create notification if review changed
-    if (updated) {
-      scheduleNotification(nextReview);
-    }
+    // if (updated) {
+    //   scheduleNotification(nextReview);
+    // }
 
     return true;
   } catch (error) {

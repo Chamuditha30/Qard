@@ -10,6 +10,7 @@ import AddCardButton from "../../src/components/elements/AddCardButton";
 import AddDeckButton from "../../src/components/elements/AddDeckButton";
 import Background from "../../src/components/elements/Background";
 import DeckCard from "../../src/components/elements/Deck";
+import EmptyState from "../../src/components/elements/EmptyState";
 import SearchBox from "../../src/components/elements/SearchBox";
 import Space from "../../src/components/elements/Space";
 import { Deck } from "../../src/models/models";
@@ -128,6 +129,9 @@ export default function Decks() {
               onPress={() => navigate(item._id)}
             />
           )}
+          ListEmptyComponent={
+            <EmptyState screen={"decks"} action={toggleNewDeckSheet} />
+          }
         />
       </View>
 

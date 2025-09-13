@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 import colors from "../../constants/colors";
 
-export default function Button({ type, text, onPress }) {
+export default function Button({ type, text, onPress, customStyles }) {
   return (
     <Pressable
       android_ripple={{ color: "#ffffff49", borderless: false }}
@@ -10,6 +10,7 @@ export default function Button({ type, text, onPress }) {
           backgroundColor: type == "save" ? colors.lightBlue : colors.red,
         },
         styles.btn,
+        customStyles,
       ]}
       onPress={onPress}
     >

@@ -1,5 +1,12 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Image, Pressable, StyleSheet, Vibration, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  Vibration,
+  View,
+} from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   Extrapolate,
@@ -20,6 +27,7 @@ import SinhalaText from "../elements/SinhalaText";
 export default function Card({
   name,
   rate,
+  nextReview,
   onPress,
   openEditSheet,
   openDeleteSheet,
@@ -130,6 +138,21 @@ export default function Card({
       transform: [{ scale }],
     };
   });
+
+  //date/time formatter
+  const formatDate = (date) => {
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+
+    return `${day}/${month}/${year} ${hours}:${minutes} ${ampm}`;
+  };
+
   return (
     <View>
       {/* card */}
@@ -166,21 +189,27 @@ export default function Card({
                 styles.colorLbl,
               ]}
             />
-            <SinhalaText
-              style={[
-                {
-                  color:
-                    rate === "hard"
-                      ? colors.red
-                      : rate === "normal"
-                      ? colors.orange
-                      : colors.green,
-                },
-                styles.name,
-              ]}
-            >
-              {name}
-            </SinhalaText>
+            <View style={styles.info}>
+              <SinhalaText
+                style={[
+                  {
+                    color:
+                      rate === "hard"
+                        ? colors.red
+                        : rate === "normal"
+                        ? colors.orange
+                        : colors.green,
+                  },
+                  styles.name,
+                ]}
+              >
+                {name}
+              </SinhalaText>
+              <Text style={styles.nextReview}>
+                Next Review {nextReview ? formatDate(nextReview) : "N/A"}
+              </Text>
+            </View>
+
             <Image
               source={
                 rate == "hard"
@@ -253,12 +282,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderRadius: 16,
   },
-  name: {
-    fontSize: 20,
-    fontWeight: "bold",
+  info: {
     flex: 1,
     marginLeft: 16,
   },
+  name: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  nextReview: { fontSize: 14, fontWeight: "bold", color: "rgba(0,0,0,0.3)" },
   emoji: { width: 32, height: 32 },
   colorLbl: {
     width: 16,

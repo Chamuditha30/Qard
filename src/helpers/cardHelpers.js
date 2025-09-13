@@ -21,11 +21,10 @@ export const getInterval = (rating) => {
 //calculate next review date based on interval while creating card
 export const getNextReviewDate = (currentInterval) => {
   const now = new Date();
-  console.log(
-    "Next review: ",
-    new Date(now.getTime() + currentInterval * 60 * 60 * 1000).toLocaleString()
-  );
-  return new Date(now.getTime() + currentInterval * 60 * 60 * 1000);
+  let nextReview = new Date(now.getTime() + currentInterval * 60 * 60 * 1000);
+
+  console.log("Next review:", nextReview.toLocaleString(), "(local time)");
+  return nextReview;
 };
 
 //calculate next review date and interval if rate changed
@@ -68,11 +67,11 @@ export const getUpdatedIntervalForReview = (
   const baseInterval = ratingIntervals[newRating];
   const multiplier = multipliers[newRating];
 
-  //if rating changed, reset interval to baseInterval
+  //user changed rating → reset to base interval
   if (oldRating !== newRating) {
     return baseInterval;
   }
 
-  //if rating is same, multiply previous interval
-  return lastInterval ? lastInterval * multiplier : baseInterval;
+  //same rating → multiply last interval
+  return lastInterval * multiplier;
 };

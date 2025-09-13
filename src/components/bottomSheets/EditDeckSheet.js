@@ -60,7 +60,13 @@ export default function EditDeckSheet({ toggle, visible, item }) {
   };
 
   return (
-    <Modal transparent visible={visible}>
+    <Modal
+      transparent
+      visible={visible}
+      onRequestClose={() => {
+        toggle();
+      }}
+    >
       <Pressable
         style={styles.backdrop}
         onPress={() => {

@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
-  count: { fontSize: 14, fontWeight: "bold", color: "rgba(0,0,0,0.5)" },
+  count: { fontSize: 14, fontWeight: "bold", color: "rgba(0,0,0,0.3)" },
   colorLbl: {
     width: 16,
     height: "100%",

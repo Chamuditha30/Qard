@@ -1,11 +1,11 @@
 import { useRealm } from "@realm/react";
 import {
-    Modal,
-    Pressable,
-    StyleSheet,
-    Text,
-    ToastAndroid,
-    View,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  View,
 } from "react-native";
 import colors from "../../constants/colors";
 import { deleteDeck } from "../../controllers/deckController";
@@ -31,21 +31,27 @@ export default function DeleteDeckSheet({ deckId, toggle, visible }) {
   };
 
   return (
-    <Modal transparent visible={visible}>
-          <Pressable
-            style={styles.backdrop}
-            onPress={() => {
-              toggle();
-            }}
-          />
-          <View style={styles.bottomSheet}>
-            <Text style={styles.title}>Delete Deck</Text>
-            <Space height={40} />
-            <Text style={styles.warning}>Are you sure, Delete this deck?</Text>
-            <Space height={24} />
-            <Button type={"delete"} text={"Delete"} onPress={deletingDeck} />
-          </View>
-        </Modal>
+    <Modal
+      transparent
+      visible={visible}
+      onRequestClose={() => {
+        toggle();
+      }}
+    >
+      <Pressable
+        style={styles.backdrop}
+        onPress={() => {
+          toggle();
+        }}
+      />
+      <View style={styles.bottomSheet}>
+        <Text style={styles.title}>Delete Deck</Text>
+        <Space height={40} />
+        <Text style={styles.warning}>Are you sure, Delete this deck?</Text>
+        <Space height={24} />
+        <Button type={"delete"} text={"Delete"} onPress={deletingDeck} />
+      </View>
+    </Modal>
   );
 }
 

@@ -1,4 +1,3 @@
-import { Picker } from "@react-native-picker/picker";
 import { useRealm } from "@realm/react";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
@@ -34,7 +33,7 @@ export default function EditCardSheet({ toggle, visible, item }) {
     frontImg: "",
     backText: "",
     backImg: "",
-    lastRating: "",
+    // lastRating: "",
   });
 
   useEffect(() => {
@@ -46,7 +45,7 @@ export default function EditCardSheet({ toggle, visible, item }) {
         frontImg: item.frontImg,
         backText: item.backText,
         backImg: item.backImg,
-        lastRating: item.lastRating,
+        // lastRating: item.lastRating,
       });
     }
   }, [visible, item]);
@@ -62,11 +61,10 @@ export default function EditCardSheet({ toggle, visible, item }) {
   //edit card
   const updateCard = () => {
     //get data
-    const { _id, name, frontText, frontImg, backText, backImg, lastRating } =
-      data;
+    const { _id, name, frontText, frontImg, backText, backImg } = data;
 
     //validate input
-    if (!name || !frontText || !backText || !lastRating) {
+    if (!name || !frontText || !backText) {
       ToastAndroid.show("Enter all fields.", ToastAndroid.SHORT);
       return;
     }
@@ -137,7 +135,13 @@ export default function EditCardSheet({ toggle, visible, item }) {
   };
 
   return (
-    <Modal transparent visible={visible}>
+    <Modal
+      transparent
+      visible={visible}
+      onRequestClose={() => {
+        toggle();
+      }}
+    >
       <Pressable
         style={styles.backdrop}
         onPress={() => {
@@ -214,7 +218,7 @@ export default function EditCardSheet({ toggle, visible, item }) {
         <Space />
 
         {/* rate picker */}
-        <Picker
+        {/* <Picker
           selectedValue={data.lastRating}
           onValueChange={(rate) => handleInputChanges("lastRating", rate)}
           style={styles.picker}
@@ -225,7 +229,7 @@ export default function EditCardSheet({ toggle, visible, item }) {
           <Picker.Item label="Normal" value="normal" />
           <Picker.Item label="Easy" value="easy" />
         </Picker>
-        <Space />
+        <Space /> */}
 
         <Button type={"save"} text={"Save"} onPress={updateCard} />
         <Space height={80} />

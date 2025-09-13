@@ -10,6 +10,18 @@ export const requestNotificationPermissions = async () => {
   }
 };
 
+//create notification handler
+export const setNotificationHandler = () => {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
+};
+
 //create notification channel
 export const createNotificationChannel = async () => {
   if (Platform.OS === "android") {
@@ -29,8 +41,22 @@ export const scheduleNotification = async (nextReview) => {
       body: "Time to check your memory",
       android: { channelId: "qard" },
     },
-    trigger: { date: nextReview },
+    trigger: nextReview,
   });
 
   console.log(`Notification scheduled for ${nextReview}`);
+};
+
+//notification
+export const showNotification = async () => {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "Flashcard Reminder",
+      body: "Notification shedule working",
+      android: { channelId: "qard" },
+    },
+    trigger: { date: new Date("2025-09-13T20:43:00Z") },
+  });
+
+  console.log("Notification sheduled");
 };

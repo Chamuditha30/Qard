@@ -1,7 +1,7 @@
 import { useObject } from "@realm/react";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { FlatList, Keyboard, StyleSheet, Text, View } from "react-native";
+import { FlatList, Keyboard, StyleSheet, View } from "react-native";
 import { BSON } from "realm";
 import AddCardSheet from "../src/components/bottomSheets/AddCardSheet";
 import AddDeckSheet from "../src/components/bottomSheets/AddDeckSheet";
@@ -12,6 +12,7 @@ import AddCardButton from "../src/components/elements/AddCardButton";
 import AddDeckButton from "../src/components/elements/AddDeckButton";
 import Background from "../src/components/elements/Background";
 import CardComp from "../src/components/elements/Card";
+import EmptyState from "../src/components/elements/EmptyState";
 import SearchBox from "../src/components/elements/SearchBox";
 import Space from "../src/components/elements/Space";
 import { Deck } from "../src/models/models";
@@ -129,6 +130,7 @@ export default function DeckCards() {
             <MemoCardComp
               name={item.name}
               rate={item.lastRating}
+              nextReview={item.nextReview}
               openEditSheet={() => toggleEditCardSheet(item)}
               openDeleteSheet={() => {
                 selectCardToDelete(item);
@@ -137,8 +139,7 @@ export default function DeckCards() {
               onPress={() => toggleCardView(item)}
             />
           )}
-          // ListEmptyComponent={<AnimationNoData />}
-          ListEmptyComponent={<Text>Empty</Text>}
+          ListEmptyComponent={<EmptyState action={toggleNewCardSheet} />}
         />
       </View>
 

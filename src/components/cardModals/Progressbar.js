@@ -16,13 +16,15 @@ const styles = StyleSheet.create({
   progressbarBg: {
     backgroundColor: colors.white,
     width: "100%",
-    height: 8,
+    height: 16,
     flexDirection: "row",
     marginVertical: 16,
     borderRadius: 100,
     overflow: "hidden",
+    padding: 1,
   },
   progressbarFill: {
     backgroundColor: colors.lightBlue,
+    borderRadius: 100,
   },
 });
