@@ -10,13 +10,8 @@ tension එකක් තියෙනවා. ඒත් මේක අත්දැ�
 එහෙම හිතලම, මේ project එකේ errors, obstacles, troubleshooting experience එකත් 
 විශේෂයි කියලා මට දැනෙනවා.
 
-<SinhalaText style={styles.text}>
-                {item.frontText &&
-                  item.frontText
-                    .split("")
-                    .slice(0, item.frontImg ? 180 : 640)
-                    .join("") +
-                    (item.frontText.length > (item.frontImg ? 180 : 640)
-                      ? "..."
-                      : "")}
-              </SinhalaText>
+Front: "What is the cerebrum?"
+Back: "The cerebrum is the largest part of the brain. It is divided into two hemispheres and is responsible for higher mental functions such as thinking, reasoning, problem-solving, emotions, memory, speech, and voluntary muscle control."
+
+Front: "Cerebrum කියන්නේ මොකක්ද?"
+Back: "Cerebrum යනු මොළයේ විශාලතම කොටසයි. මෙය අර්ධගෝල 2කින් සමන්විත වන අතර මිනිසාගේ උසස් මනෝ ක්‍රියා මෙන්ම මතකය, තීරණ ගන්නා හැකියාව, වාග් විකාශය, හැඟීම්, සහ සන්සුන් සන්ධි ක්‍රියා පාලනය කරයි."

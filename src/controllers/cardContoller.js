@@ -59,32 +59,17 @@ export const editCard = (realm, data) => {
       return false;
     }
 
-    //get new interval and next review if rate changed
-    // const { lastIntervalHours, nextReview, updated } = getUpdatedReviewDate(
-    //   card.lastRating,
-    //   data.lastRating,
-    //   card.lastIntervalHours,
-    //   card.nextReview
-    // );
-
     realm.write(() => {
       realm.create(
         "Card",
         {
           _id: data._id,
-          // lastIntervalHours,
-          // nextReview,
           lastReviewed: new Date(),
           ...data,
         },
         "modified"
       );
     });
-
-    //create notification if review changed
-    // if (updated) {
-    //   scheduleNotification(nextReview);
-    // }
 
     return true;
   } catch (error) {

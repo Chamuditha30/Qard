@@ -13,6 +13,11 @@ import {
   ToastAndroid,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import colors from "../../constants/colors";
 import { editCard } from "../../controllers/cardContoller";
 import Button from "../elements/Button";
@@ -33,7 +38,6 @@ export default function EditCardSheet({ toggle, visible, item }) {
     frontImg: "",
     backText: "",
     backImg: "",
-    // lastRating: "",
   });
 
   useEffect(() => {
@@ -45,7 +49,6 @@ export default function EditCardSheet({ toggle, visible, item }) {
         frontImg: item.frontImg,
         backText: item.backText,
         backImg: item.backImg,
-        // lastRating: item.lastRating,
       });
     }
   }, [visible, item]);
@@ -134,6 +137,30 @@ export default function EditCardSheet({ toggle, visible, item }) {
     }
   };
 
+  //initialize shared value for opacity
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue((height / 3) * 2);
+
+  //animate when modal opens/closes
+  useEffect(() => {
+    if (visible) {
+      opacity.value = withTiming(1, { duration: 300 });
+      translateY.value = withTiming(0, { duration: 300 });
+    } else {
+      opacity.value = withTiming(0, { duration: 200 });
+      translateY.value = withTiming((height / 3) * 2, { duration: 200 });
+    }
+  }, [visible]);
+
+  //animated style for backdrop
+  const backdropStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  const sheetStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
   return (
     <Modal
       transparent
@@ -142,98 +169,89 @@ export default function EditCardSheet({ toggle, visible, item }) {
         toggle();
       }}
     >
-      <Pressable
-        style={styles.backdrop}
-        onPress={() => {
-          toggle();
-        }}
-      />
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          alignItems: "center",
-        }}
-        style={styles.bottomSheet}
-      >
-        <Text style={styles.title}>Edit Card</Text>
-        <Space height={40} />
-
-        {/* card name input */}
-        <TextInput
-          placeholder="Card name"
-          placeholderTextColor={colors.darkGray}
-          maxLength={20}
-          style={styles.input}
-          value={data.name}
-          onChangeText={(text) => handleInputChanges("name", text)}
+      <Animated.View style={[styles.backdrop, backdropStyle]}>
+        <Pressable
+          style={{ flex: 1 }}
+          onPress={() => {
+            toggle();
+          }}
         />
-        <Space />
+      </Animated.View>
 
-        {/* front text input */}
-        <TextInput
-          placeholder="Front text"
-          placeholderTextColor={colors.darkGray}
-          multiline={true}
-          numberOfLines={5}
-          textAlignVertical="top"
-          style={[styles.input, { height: 120 }]}
-          value={data.frontText}
-          onChangeText={(text) => handleInputChanges("frontText", text)}
-        />
-        <Space />
-
-        {/* front image input */}
-        <View style={styles.uploadContainer}>
-          <ButtonUpload onPress={pickFrontImg} isUploaded={data.frontImg} />
-          {data.frontImg ? (
-            <Image source={{ uri: data.frontImg }} style={styles.imgPrev} />
-          ) : (
-            <Text style={styles.formatHint}>(.jpg / .jpeg / .png)</Text>
-          )}
-        </View>
-        <Space />
-
-        {/* back text input */}
-        <TextInput
-          placeholder="Back text"
-          placeholderTextColor={colors.darkGray}
-          multiline={true}
-          numberOfLines={5}
-          textAlignVertical="top"
-          style={[styles.input, { height: 120 }]}
-          value={data.backText}
-          onChangeText={(text) => handleInputChanges("backText", text)}
-        />
-        <Space />
-
-        {/* back image input */}
-        <View style={styles.uploadContainer}>
-          <ButtonUpload onPress={pickBackImg} isUploaded={data.backImg} />
-          {data.backImg ? (
-            <Image source={{ uri: data.backImg }} style={styles.imgPrev} />
-          ) : (
-            <Text style={styles.formatHint}>(.jpg / .jpeg / .png)</Text>
-          )}
-        </View>
-        <Space />
-
-        {/* rate picker */}
-        {/* <Picker
-          selectedValue={data.lastRating}
-          onValueChange={(rate) => handleInputChanges("lastRating", rate)}
-          style={styles.picker}
-          dropdownIconColor={colors.darkGray}
+      <Animated.View style={[styles.bottomSheet, sheetStyle]}>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{
+            alignItems: "center",
+          }}
+          style={{ flex: 1, width: "100%" }}
         >
-          <Picker.Item label="Select rate" value="" />
-          <Picker.Item label="Hard" value="hard" />
-          <Picker.Item label="Normal" value="normal" />
-          <Picker.Item label="Easy" value="easy" />
-        </Picker>
-        <Space /> */}
+          <Text style={styles.title}>Edit Card</Text>
+          <Space height={40} />
 
-        <Button type={"save"} text={"Save"} onPress={updateCard} />
-        <Space height={80} />
-      </ScrollView>
+          {/* card name input */}
+          <TextInput
+            placeholder="Card name"
+            placeholderTextColor={colors.darkGray}
+            maxLength={20}
+            style={styles.input}
+            value={data.name}
+            onChangeText={(text) => handleInputChanges("name", text)}
+          />
+          <Space />
+
+          {/* front text input */}
+          <TextInput
+            placeholder="Front text"
+            placeholderTextColor={colors.darkGray}
+            multiline={true}
+            numberOfLines={5}
+            textAlignVertical="top"
+            style={[styles.input, { height: 120 }]}
+            value={data.frontText}
+            onChangeText={(text) => handleInputChanges("frontText", text)}
+          />
+          <Space />
+
+          {/* front image input */}
+          <View style={styles.uploadContainer}>
+            <ButtonUpload onPress={pickFrontImg} isUploaded={data.frontImg} />
+            {data.frontImg ? (
+              <Image source={{ uri: data.frontImg }} style={styles.imgPrev} />
+            ) : (
+              <Text style={styles.formatHint}>(.jpg / .jpeg / .png)</Text>
+            )}
+          </View>
+          <Space />
+
+          {/* back text input */}
+          <TextInput
+            placeholder="Back text"
+            placeholderTextColor={colors.darkGray}
+            multiline={true}
+            numberOfLines={5}
+            textAlignVertical="top"
+            style={[styles.input, { height: 120 }]}
+            value={data.backText}
+            onChangeText={(text) => handleInputChanges("backText", text)}
+          />
+          <Space />
+
+          {/* back image input */}
+          <View style={styles.uploadContainer}>
+            <ButtonUpload onPress={pickBackImg} isUploaded={data.backImg} />
+            {data.backImg ? (
+              <Image source={{ uri: data.backImg }} style={styles.imgPrev} />
+            ) : (
+              <Text style={styles.formatHint}>(.jpg / .jpeg / .png)</Text>
+            )}
+          </View>
+          <Space />
+
+          <Button type={"save"} text={"Save"} onPress={updateCard} />
+          <Space height={80} />
+        </ScrollView>
+      </Animated.View>
     </Modal>
   );
 }
@@ -241,7 +259,7 @@ export default function EditCardSheet({ toggle, visible, item }) {
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.8)",
     justifyContent: "flex-end",
   },
   bottomSheet: {

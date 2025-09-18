@@ -116,7 +116,7 @@ export default function DeckCards() {
           {/* button container */}
           <View style={styles.btnContainer}>
             <AddDeckButton onPress={toggleNewDeckSheet} />
-            <AddCardButton onPress={toggleNewCardSheet} />
+            <AddCardButton onPress={toggleNewCardSheet} decks={deck} />
           </View>
         </View>
 

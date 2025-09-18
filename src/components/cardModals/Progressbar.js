@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     borderRadius: 100,
     overflow: "hidden",
-    padding: 1,
   },
   progressbarFill: {
     backgroundColor: colors.lightBlue,

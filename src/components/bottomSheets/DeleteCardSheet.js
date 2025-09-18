@@ -1,12 +1,11 @@
 import { useRealm } from "@realm/react";
-import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  View,
-} from "react-native";
+import { useEffect } from "react";
+import { Modal, Pressable, StyleSheet, Text, ToastAndroid } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import colors from "../../constants/colors";
 import { deleteCard } from "../../controllers/cardContoller";
 import Button from "../elements/Button";
@@ -30,6 +29,30 @@ export default function DeleteCardSheet({ cardId, toggle, visible }) {
     }
   };
 
+  //initialize shared value for opacity
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(300);
+
+  //animate when modal opens/closes
+  useEffect(() => {
+    if (visible) {
+      opacity.value = withTiming(1, { duration: 300 });
+      translateY.value = withTiming(0, { duration: 300 });
+    } else {
+      opacity.value = withTiming(0, { duration: 200 });
+      translateY.value = withTiming(300, { duration: 200 });
+    }
+  }, [visible]);
+
+  //animated style for backdrop
+  const backdropStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  const sheetStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
   return (
     <Modal
       transparent
@@ -38,19 +61,17 @@ export default function DeleteCardSheet({ cardId, toggle, visible }) {
         toggle();
       }}
     >
-      <Pressable
-        style={styles.backdrop}
-        onPress={() => {
-          toggle();
-        }}
-      />
-      <View style={styles.bottomSheet}>
+      <Animated.View style={[styles.backdrop, backdropStyle]}>
+        <Pressable style={{ flex: 1 }} onPress={toggle} />
+      </Animated.View>
+
+      <Animated.View style={[styles.bottomSheet, sheetStyle]}>
         <Text style={styles.title}>Delete Card</Text>
         <Space height={40} />
         <Text style={styles.warning}>Are you sure, Delete this card?</Text>
         <Space height={24} />
         <Button type={"delete"} text={"Delete"} onPress={deletingCard} />
-      </View>
+      </Animated.View>
     </Modal>
   );
 }
@@ -58,7 +79,7 @@ export default function DeleteCardSheet({ cardId, toggle, visible }) {
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.8)",
     justifyContent: "flex-end",
   },
   bottomSheet: {

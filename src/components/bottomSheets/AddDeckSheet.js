@@ -1,5 +1,5 @@
 import { useRealm } from "@realm/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -7,8 +7,12 @@ import {
   Text,
   TextInput,
   ToastAndroid,
-  View,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import colors from "../../constants/colors";
 import { createDeck } from "../../controllers/deckController";
 import Button from "../elements/Button";
@@ -57,6 +61,30 @@ export default function AddDeckSheet({ toggle, visible }) {
     }
   };
 
+  //initialize shared value for opacity
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(300);
+
+  //animate when modal opens/closes
+  useEffect(() => {
+    if (visible) {
+      opacity.value = withTiming(1, { duration: 300 });
+      translateY.value = withTiming(0, { duration: 300 });
+    } else {
+      opacity.value = withTiming(0, { duration: 200 });
+      translateY.value = withTiming(300, { duration: 200 });
+    }
+  }, [visible]);
+
+  //animated style for backdrop
+  const backdropStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  const sheetStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
   return (
     <Modal
       transparent
@@ -65,13 +93,11 @@ export default function AddDeckSheet({ toggle, visible }) {
         toggle();
       }}
     >
-      <Pressable
-        style={styles.backdrop}
-        onPress={() => {
-          toggle();
-        }}
-      />
-      <View style={styles.bottomSheet}>
+      <Animated.View style={[styles.backdrop, backdropStyle]}>
+        <Pressable style={{ flex: 1 }} onPress={toggle} />
+      </Animated.View>
+
+      <Animated.View style={[styles.bottomSheet, sheetStyle]}>
         <Text style={styles.title}>New Deck</Text>
         <Space height={40} />
         <TextInput
@@ -84,7 +110,7 @@ export default function AddDeckSheet({ toggle, visible }) {
         />
         <Space />
         <Button type={"save"} text={"Save"} onPress={createNewDeck} />
-      </View>
+      </Animated.View>
     </Modal>
   );
 }
@@ -92,7 +118,7 @@ export default function AddDeckSheet({ toggle, visible }) {
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.8)",
     justifyContent: "flex-end",
   },
   bottomSheet: {

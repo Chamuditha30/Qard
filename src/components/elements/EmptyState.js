@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   bg: {
-    backgroundColor: colors.bgBlue,
+    backgroundColor: colors.white,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
   },
   text: {
-    fontSize: 24,
+    fontSize: 20,
     color: colors.darkBlue,
     fontWeight: "bold",
     textAlign: "center",
