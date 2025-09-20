@@ -1,4 +1,4 @@
-package com.anonymous.Qard
+package com.qard.Qard
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

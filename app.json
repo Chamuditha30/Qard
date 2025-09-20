@@ -17,7 +17,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.Qard"
+      "package": "com.qard.Qard"
     },
     "web": {
       "bundler": "metro",
