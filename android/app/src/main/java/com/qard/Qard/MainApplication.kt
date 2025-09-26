@@ -1,4 +1,4 @@
-package com.qard.Qard
+package com.qard.qard
 
 import android.app.Application
 import android.content.res.Configuration

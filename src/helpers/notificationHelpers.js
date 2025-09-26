@@ -14,10 +14,9 @@ export const requestNotificationPermissions = async () => {
 export const setNotificationHandler = () => {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
-      shouldPlaySound: false,
-      shouldSetBadge: false,
-      shouldShowBanner: true,
-      shouldShowList: true,
+      shouldShowAlert: true, // shows the banner/alert
+      shouldPlaySound: true, // plays sound if provided
+      shouldSetBadge: false, // updates app icon badge
     }),
   });
 };
@@ -27,7 +26,8 @@ export const createNotificationChannel = async () => {
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync("qard", {
       name: "Qard Notifications",
-      importance: Notifications.AndroidImportance.HIGH,
+      importance: Notifications.AndroidImportance.MAX,
+      sound: "default",
     });
     console.log("Notification channel created!");
   }

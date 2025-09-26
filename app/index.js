@@ -22,7 +22,7 @@ export default function Index() {
   //get all cards for review check it empty or not for navigate
   const now = new Date();
   const cards = useQuery(Card).filtered("nextReview <= $0", now);
-  const tab = cards > 0 ? "Cards" : "Decks";
+  const tab = cards.length > 0 ? "Cards" : "Decks";
 
   return <Redirect href={`(tabs)/${tab}`} />;
 }
